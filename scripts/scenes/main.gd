@@ -42,7 +42,7 @@ func _on_exit_button_pressed():
 	AudioManager.play_sound("button_click")
 	# On Android, minimize instead of quitting
 	if OS.has_feature("android"):
-		OS.minimize_window()
+		OS.minimize()
 	else:
 		get_tree().quit()
 

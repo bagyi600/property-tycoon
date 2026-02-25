@@ -336,7 +336,7 @@ func are_all_players_ready() -> bool:
 	return true
 
 # Utility functions
-func is_connected() -> bool:
+func is_connected_to_server() -> bool:
 	return connection_state == ConnectionState.CONNECTED or connection_state == ConnectionState.IN_GAME
 
 func is_in_game() -> bool:

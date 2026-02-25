@@ -280,15 +280,15 @@ func show_toast(message: String, duration: float = 2.0):
 	# Simple toast notification
 	var toast = Label.new()
 	toast.text = message
-	toatch.name = "Toast"
-	toatch.theme = ui_theme
-	toatch.theme_override_font_sizes/font_size = 16
-	toatch.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	toatch.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	toatch.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	toatch.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	toatch.position = Vector2(get_viewport().size.x / 2 - 100, get_viewport().size.y - 100)
-	toatch.size = Vector2(200, 50)
+	toast.name = "Toast"
+	toast.theme = ui_theme
+	toast.add_theme_font_size_override("font_size", 16)
+	toast.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	toast.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	toast.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	toast.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	toast.position = Vector2(get_viewport().size.x / 2 - 100, get_viewport().size.y - 100)
+	toast.size = Vector2(200, 50)
 	
 	add_child(toast)
 	

@@ -232,11 +232,35 @@ func _handle_space_landing(player_id: int, position: int):
 		"special":
 			_handle_special_space(player_id, space.get("action", ""))
 		"tax":
-			_pay_tax(player_id, space.get("amount", 0))
+			# Handle tax space
+			var tax_amount = space.get("amount", 0)
+			player.money -= tax_amount
+			money_changed.emit(player_id, player.money)
+			print("Player ", player.name, " paid tax: $", tax_amount)
 		"railroad":
-			_handle_railroad_landing(player_id, str(position))
+			# Handle railroad space (simplified as property for now)
+			_handle_property_landing(player_id, str(position))
 		"utility":
-			_handle_utility_landing(player_id, str(position))
+			# Handle utility space (simplified as property for now)
+			_handle_property_landing(player_id, str(position))
+
+func _handle_special_space(player_id: int, action: String):
+	var player = get_player(player_id)
+	
+	match action:
+		"collect_salary":
+			player.money += config.salary
+			money_changed.emit(player_id, player.money)
+			print("Player ", player.name, " collected salary: $", config.salary)
+		"draw_community_chest":
+			_draw_community_chest_card(player_id)
+		"draw_chance":
+			_draw_chance_card(player_id)
+		"go_to_jail":
+			_send_to_jail(player_id)
+		"free_parking":
+			# Collect free parking money (if implemented)
+			print("Player ", player.name, " landed on Free Parking")
 
 func _handle_property_landing(player_id: int, property_id: String):
 	var property_data = properties.get(property_id, {})
