@@ -2,13 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://placeholder_space26png"
-path="res://.godot/imported/space_26.png"
+uid="uid://bmm8qgx2ad8t2"
+path="res://.godot/imported/space_26.png-b375ed58c7514b0a3704f155fc465c13.ctex"
+metadata={
+"vram_texture": false
+}
 
 [deps]
 
 source_file="res://assets/board/space_26.png"
-dest_files=["res://.godot/imported/space_26.png"]
+dest_files=["res://.godot/imported/space_26.png-b375ed58c7514b0a3704f155fc465c13.ctex"]
 
 [params]
 
@@ -22,3 +25,10 @@ mipmaps/generate=false
 mipmaps/limit=-1
 roughness/mode=0
 roughness/src_normal=""
+process/fix_alpha_border=true
+process/premult_alpha=false
+process/normal_map_invert_y=false
+process/hdr_as_srgb=false
+process/hdr_clamp_exposure=false
+process/size_limit=0
+detect_3d/compress_to=1

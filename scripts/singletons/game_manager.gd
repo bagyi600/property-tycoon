@@ -498,3 +498,71 @@ func get_game_state() -> String:
 		GameState.PAUSED: return "paused"
 		GameState.GAME_OVER: return "game_over"
 		_: return "unknown"
+
+# Card drawing functions
+func _draw_community_chest_card(player_id: int):
+	var player = get_player(player_id)
+	if not player:
+		return
+	
+	if community_chest_cards.is_empty():
+		_generate_cards()  # Regenerate if empty
+	
+	var card = community_chest_cards.pop_front()
+	print("Player ", player.name, " drew Community Chest: ", card.text)
+	
+	# Handle card action
+	match card.get("action", ""):
+		"add_money":
+			player.money += card.get("amount", 0)
+			money_changed.emit(player_id, player.money)
+		"pay_money":
+			player.money -= card.get("amount", 0)
+			money_changed.emit(player_id, player.money)
+		"move_to":
+			move_player(player_id, card.get("target", 0) - player.position)
+		"go_to_jail":
+			_send_to_jail(player_id)
+		"get_out_of_jail_free":
+			# Give player get out of jail free card
+			pass
+	
+	# Put card at bottom of deck
+	community_chest_cards.append(card)
+
+func _draw_chance_card(player_id: int):
+	var player = get_player(player_id)
+	if not player:
+		return
+	
+	if chance_cards.is_empty():
+		_generate_cards()  # Regenerate if empty
+	
+	var card = chance_cards.pop_front()
+	print("Player ", player.name, " drew Chance: ", card.text)
+	
+	# Handle card action
+	match card.get("action", ""):
+		"add_money":
+			player.money += card.get("amount", 0)
+			money_changed.emit(player_id, player.money)
+		"pay_money":
+			player.money -= card.get("amount", 0)
+			money_changed.emit(player_id, player.money)
+		"move_to":
+			move_player(player_id, card.get("target", 0) - player.position)
+		"go_to_jail":
+			_send_to_jail(player_id)
+	
+	# Put card at bottom of deck
+	chance_cards.append(card)
+
+func _send_to_jail(player_id: int):
+	var player = get_player(player_id)
+	if not player:
+		return
+	
+	player.in_jail = true
+	player.jail_turns = 0
+	player.position = 10  # Jail position (adjust based on your board)
+	print("Player ", player.name, " sent to jail!")

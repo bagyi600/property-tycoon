@@ -1,19 +1,24 @@
 [remap]
 
-importer="wave"
+importer="wav"
 type="AudioStreamWAV"
-uid="uid://placeholder_errorwav"
-path="res://.godot/imported/error.wav"
+uid="uid://dlppqylgwltj1"
+path="res://.godot/imported/error.wav-9a8a4e275e133a580f54ea9007ffabdb.sample"
 
 [deps]
 
 source_file="res://assets/sounds/error.wav"
-dest_files=["res://.godot/imported/error.wav"]
+dest_files=["res://.godot/imported/error.wav-9a8a4e275e133a580f54ea9007ffabdb.sample"]
 
 [params]
 
-loop=false
-loop_offset=0
-bpm=0
-beat_count=0
-bar_beats=4
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0
