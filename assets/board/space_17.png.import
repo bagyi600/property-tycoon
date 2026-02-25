@@ -2,13 +2,13 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://placeholder_bootsplashpng"
-path="res://.godot/imported/boot_splash.png"
+uid="uid://placeholder_space17png"
+path="res://.godot/imported/space_17.png"
 
 [deps]
 
-source_file="res://assets/ui/boot_splash.png"
-dest_files=["res://.godot/imported/boot_splash.png"]
+source_file="res://assets/board/space_17.png"
+dest_files=["res://.godot/imported/space_17.png"]
 
 [params]
 
