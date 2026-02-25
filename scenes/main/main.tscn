@@ -1,0 +1,121 @@
+[gd_scene load_steps=5 format=3 uid="uid://bq5q8q7q6q5q4"]
+
+[ext_resource type="Script" path="res://scripts/scenes/main.gd" id="1_6q5q4"]
+[ext_resource type="Texture2D" uid="uid://bv8q7q6q5q4q3" path="res://assets/ui/background.png" id="2_bv8q7"]
+[ext_resource type="StyleBoxFlat" uid="uid://cr9q8q7q6q5" path="res://assets/ui/panel_style.tres" id="3_cr9q8"]
+[ext_resource type="Font" uid="uid://ds0q9q8q7q6" path="res://assets/fonts/main_font.ttf" id="4_ds0q9"]
+
+[node name="Main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_6q5q4")
+
+[node name="Background" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource("2_bv8q7")
+stretch_mode = 3
+expand_mode = 1
+
+[node name="MainContainer" type="VBoxContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 50.0
+offset_top = 100.0
+offset_right = -50.0
+offset_bottom = -100.0
+alignment = 1
+
+[node name="TitleContainer" type="HBoxContainer" parent="MainContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+alignment = 1
+
+[node name="Title" type="Label" parent="TitleContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 72
+text = "PROPERTY TYCOON"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="ButtonContainer" type="VBoxContainer" parent="MainContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(400, 0)
+alignment = 1
+
+[node name="PlayButton" type="Button" parent="ButtonContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+text = "PLAY"
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 36
+flat = false
+theme_override_styles/normal = ExtResource("3_cr9q8")
+theme_override_styles/hover = ExtResource("3_cr9q8")
+theme_override_styles/pressed = ExtResource("3_cr9q8")
+theme_override_styles/focus = ExtResource("3_cr9q8")
+
+[node name="MultiplayerButton" type="Button" parent="ButtonContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+text = "MULTIPLAYER"
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 36
+flat = false
+theme_override_styles/normal = ExtResource("3_cr9q8")
+theme_override_styles/hover = ExtResource("3_cr9q8")
+theme_override_styles/pressed = ExtResource("3_cr9q8")
+theme_override_styles/focus = ExtResource("3_cr9q8")
+
+[node name="SettingsButton" type="Button" parent="ButtonContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+text = "SETTINGS"
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 36
+flat = false
+theme_override_styles/normal = ExtResource("3_cr9q8")
+theme_override_styles/hover = ExtResource("3_cr9q8")
+theme_override_styles/pressed = ExtResource("3_cr9q8")
+theme_override_styles/focus = ExtResource("3_cr9q8")
+
+[node name="ShopButton" type="Button" parent="ButtonContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+text = "SHOP"
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 36
+flat = false
+theme_override_styles/normal = ExtResource("3_cr9q8")
+theme_override_styles/hover = ExtResource("3_cr9q8")
+theme_override_styles/pressed = ExtResource("3_cr9q8")
+theme_override_styles/focus = ExtResource("3_cr9q8")
+
+[node name="ExitButton" type="Button" parent="ButtonContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+custom_minimum_size = Vector2(0, 80)
+text = "EXIT"
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 36
+flat = false
+theme_override_styles/normal = ExtResource("3_cr9q8")
+theme_override_styles/hover = ExtResource("3_cr9q8")
+theme_override_styles/pressed = ExtResource("3_cr9q8")
+theme_override_styles/focus = ExtResource("3_cr9q8")
+
+[node name="VersionLabel" type="Label" parent="MainContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_fonts/font = ExtResource("4_ds0q9")
+theme_override_font_sizes/font_size = 18
+text = "v1.0.0"
+horizontal_alignment = 1
+vertical_alignment = 1
