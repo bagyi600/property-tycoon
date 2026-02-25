@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Mesh" path="res://assets/3d/models/dice.obj" id="1"]
+
+[node name="Dice3D" type="MeshInstance3D"]
+mesh = ExtResource("1")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)

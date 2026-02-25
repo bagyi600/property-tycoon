@@ -1,0 +1,23 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Mesh" path="res://assets/3d/models/dice.obj" id="1"]
+[ext_resource type="Mesh" path="res://assets/3d/models/token.obj" id="2"]
+[ext_resource type="Script" path="res://scripts/3d/test_3d.gd" id="3"]
+
+[node name="Test3D" type="Node3D"]
+script = ExtResource("3")
+
+[node name="Dice3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0.5, 0)
+
+[node name="Token3D" type="MeshInstance3D" parent="."]
+mesh = ExtResource("2")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0.25, 0)
+
+[node name="Camera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.866025, 0.5, 0, -0.5, 0.866025, 0, 3, 5)
+current = true
+
+[node name="Light" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866025, 0, 0.5, 0, 1, 0, -0.5, 0, 0.866025, 0, 5, 0)
