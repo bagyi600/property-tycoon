@@ -23,13 +23,26 @@ jobs:
         
     - name: Setup Android SDK
       uses: android-actions/setup-android@v3
-      
+      with:
+        api-level: 34
+        build-tools: 34.0.0
+        ndk: 25.2.9519653
+        cmake: 3.22.1
+        emulator: false
+        
+    - name: Install Android SDK tools
+      run: |
+        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0"
+        
     - name: Download Godot 4.3
       run: |
         wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
         unzip -q Godot_v4.3-stable_linux.x86_64.zip
         chmod +x Godot_v4.3-stable_linux.x86_64
-        sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+        mkdir -p ~/.local/bin
+        mv Godot_v4.3-stable_linux.x86_64 ~/.local/bin/godot
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
         
     - name: Download Android export templates
       run: |
@@ -50,26 +63,63 @@ jobs:
           -keypass android \
           -dname "CN=Android Debug, OU=Android, O=Android, L=Unknown, S=Unknown, C=US"
           
+    - name: Verify project structure
+      run: |
+        echo "Project structure:"
+        ls -la
+        echo ""
+        echo "Checking project.godot:"
+        if [ -f "project.godot" ]; then
+          echo "✅ project.godot exists"
+          head -20 project.godot
+        else
+          echo "❌ project.godot missing"
+          exit 1
+        fi
+        
+    - name: Create build directory
+      run: |
+        mkdir -p build
+        
     - name: Build debug APK
       run: |
-        godot --headless \
+        echo "Current directory: $(pwd)"
+        echo "Godot version:"
+        godot --version || echo "Godot not in PATH"
+        which godot || echo "Godot not found"
+        
+        # Try to build with full path
+        ~/.local/bin/godot --headless \
           --export-debug "Android Debug" \
           build/property-tycoon-debug.apk \
           --path .
           
+    - name: Check if APK was created
+      run: |
+        if [ -f "build/property-tycoon-debug.apk" ]; then
+          echo "✅ APK created successfully"
+          ls -lh build/
+        else
+          echo "❌ APK not created"
+          echo "Checking build directory:"
+          ls -la build/ || echo "Build directory empty"
+          exit 1
+        fi
+        
     - name: Upload debug APK artifact
       uses: actions/upload-artifact@v4
       with:
         name: property-tycoon-debug
         path: build/property-tycoon-debug.apk
         retention-days: 7
+        if-no-files-found: error
         
     - name: Create release build (if on main branch)
       if: github.ref == 'refs/heads/main'
       run: |
         # This would use your production keystore in a real scenario
         # For now, we'll create a test release build
-        godot --headless \
+        ~/.local/bin/godot --headless \
           --export-release "Android" \
           build/property-tycoon-release-unsigned.apk \
           --path .
@@ -93,20 +143,31 @@ jobs:
         name: property-tycoon-release
         path: build/property-tycoon-release-signed.apk
         retention-days: 7
+        if-no-files-found: error
         
-    - name: Generate QR code for download
-      if: github.ref == 'refs/heads/main'
+    - name: Generate summary
+      if: always()
       run: |
-        sudo apt-get update
-        sudo apt-get install -y qrencode
-        echo "## Build Complete!" >> $GITHUB_STEP_SUMMARY
-        echo "### Debug APK" >> $GITHUB_STEP_SUMMARY
-        echo "Download: [property-tycoon-debug.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Release APK" >> $GITHUB_STEP_SUMMARY
-        echo "Download: [property-tycoon-release-signed.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### Installation" >> $GITHUB_STEP_SUMMARY
+        
+        if [ -f "build/property-tycoon-debug.apk" ]; then
+          echo "### ✅ Debug Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "Download: [property-tycoon-debug.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "### ❌ Debug Build Failed" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ -f "build/property-tycoon-release-signed.apk" ]; then
+          echo "### ✅ Release Build Successful" >> $GITHUB_STEP_SUMMARY
+          echo "Download: [property-tycoon-release-signed.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "### Installation Instructions" >> $GITHUB_STEP_SUMMARY
         echo "1. Download APK from artifacts above" >> $GITHUB_STEP_SUMMARY
         echo "2. On Android: Settings → Security → Unknown sources (allow)" >> $GITHUB_STEP_SUMMARY
         echo "3. Install APK" >> $GITHUB_STEP_SUMMARY
+        echo "4. Launch 'Property Tycoon'" >> $GITHUB_STEP_SUMMARY

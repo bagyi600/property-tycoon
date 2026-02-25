@@ -1,0 +1,90 @@
+name: Test Build
+
+on:
+  workflow_dispatch:  # Manual trigger only
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Debug information
+      run: |
+        echo "=== System Information ==="
+        uname -a
+        echo ""
+        echo "=== Directory Structure ==="
+        find . -type f -name "*.gd" -o -name "*.tscn" -o -name "*.godot" | head -20
+        echo ""
+        echo "=== project.godot ==="
+        if [ -f "project.godot" ]; then
+          head -30 project.godot
+        else
+          echo "❌ project.godot not found!"
+          find . -name "*.godot"
+        fi
+        echo ""
+        echo "=== export_presets.cfg ==="
+        if [ -f "export_presets.cfg" ]; then
+          grep "name=" export_presets.cfg
+        else
+          echo "❌ export_presets.cfg not found!"
+        fi
+        
+    - name: Test Godot project
+      run: |
+        # First, let's see if we can parse the project file
+        echo "=== Checking project configuration ==="
+        
+        # Check for required sections in project.godot
+        if grep -q "config_version=" project.godot; then
+          echo "✅ config_version found"
+        else
+          echo "❌ config_version missing"
+        fi
+        
+        if grep -q "application/config/name=" project.godot; then
+          echo "✅ application name found"
+        else
+          echo "❌ application name missing"
+        fi
+        
+        # List all files
+        echo ""
+        echo "=== All project files ==="
+        find . -type f | sort
+        
+    - name: Simple export test
+      run: |
+        echo "=== Testing minimal export ==="
+        
+        # Create a simple test project if needed
+        if [ ! -f "project.godot" ]; then
+          echo "Creating minimal project.godot..."
+          cat > project.godot << EOF
+[application]
+
+config/name="Property Tycoon Test"
+config/description="Test build"
+run/main_scene=""
+config/icon=""
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+quality/driver/driver_name="GLES3"
+
+[input]
+
+ui_up={
+"deadzone": 0.5,
+"events": [ Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"command_or_control_pressed":false,"pressed":false,"keycode":16777232,"physical_keycode":0,"unicode":0,"echo":false,"script":null)
+ ]
+}
+EOF
+        fi
+        
+        echo "Test project created/verified"
