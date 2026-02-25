@@ -1,0 +1,112 @@
+name: Android Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:  # Manual trigger
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '21'
+        
+    - name: Setup Android SDK
+      uses: android-actions/setup-android@v3
+      
+    - name: Download Godot 4.3
+      run: |
+        wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_linux.x86_64.zip
+        unzip -q Godot_v4.3-stable_linux.x86_64.zip
+        chmod +x Godot_v4.3-stable_linux.x86_64
+        sudo mv Godot_v4.3-stable_linux.x86_64 /usr/local/bin/godot
+        
+    - name: Download Android export templates
+      run: |
+        wget -q https://github.com/godotengine/godot/releases/download/4.3-stable/Godot_v4.3-stable_export_templates.tpz
+        mkdir -p ~/.local/share/godot/export_templates/4.3.stable
+        unzip -q Godot_v4.3-stable_export_templates.tpz -d ~/.local/share/godot/export_templates/4.3.stable
+        
+    - name: Create debug keystore
+      run: |
+        keytool -genkeypair \
+          -v \
+          -keystore debug.keystore \
+          -alias androiddebugkey \
+          -keyalg RSA \
+          -keysize 2048 \
+          -validity 10000 \
+          -storepass android \
+          -keypass android \
+          -dname "CN=Android Debug, OU=Android, O=Android, L=Unknown, S=Unknown, C=US"
+          
+    - name: Build debug APK
+      run: |
+        godot --headless \
+          --export-debug "Android Debug" \
+          build/property-tycoon-debug.apk \
+          --path .
+          
+    - name: Upload debug APK artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: property-tycoon-debug
+        path: build/property-tycoon-debug.apk
+        retention-days: 7
+        
+    - name: Create release build (if on main branch)
+      if: github.ref == 'refs/heads/main'
+      run: |
+        # This would use your production keystore in a real scenario
+        # For now, we'll create a test release build
+        godot --headless \
+          --export-release "Android" \
+          build/property-tycoon-release-unsigned.apk \
+          --path .
+          
+        # Sign with debug keystore for testing
+        apksigner sign \
+          --ks debug.keystore \
+          --ks-pass pass:android \
+          --key-pass pass:android \
+          --ks-key-alias androiddebugkey \
+          --out build/property-tycoon-release-signed.apk \
+          build/property-tycoon-release-unsigned.apk
+          
+        # Verify signature
+        apksigner verify --verbose build/property-tycoon-release-signed.apk
+        
+    - name: Upload release APK artifact (if on main branch)
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v4
+      with:
+        name: property-tycoon-release
+        path: build/property-tycoon-release-signed.apk
+        retention-days: 7
+        
+    - name: Generate QR code for download
+      if: github.ref == 'refs/heads/main'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y qrencode
+        echo "## Build Complete!" >> $GITHUB_STEP_SUMMARY
+        echo "### Debug APK" >> $GITHUB_STEP_SUMMARY
+        echo "Download: [property-tycoon-debug.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Release APK" >> $GITHUB_STEP_SUMMARY
+        echo "Download: [property-tycoon-release-signed.apk](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Installation" >> $GITHUB_STEP_SUMMARY
+        echo "1. Download APK from artifacts above" >> $GITHUB_STEP_SUMMARY
+        echo "2. On Android: Settings → Security → Unknown sources (allow)" >> $GITHUB_STEP_SUMMARY
+        echo "3. Install APK" >> $GITHUB_STEP_SUMMARY
